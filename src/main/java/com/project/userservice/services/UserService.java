@@ -1,6 +1,7 @@
 package com.project.userservice.services;
 
 import com.project.userservice.exceptions.InvalidPasswordException;
+import com.project.userservice.exceptions.InvalidTokenException;
 import com.project.userservice.model.Token;
 import com.project.userservice.model.User;
 import com.project.userservice.repository.TokenRepository;
@@ -50,14 +51,25 @@ public class UserService {
         User user = getUserByEmail.get();
 
         if(!bCryptPasswordEncoder.matches(password, user.getHashedPassword())) {
-            throw new InvalidPasswordException("Invalid Password");
+            throw new InvalidPasswordException("Invalid Password is provided");
         }
 
         Token token = generateToken(user);
         return tokenRepository.save(token);
 
     }
-    public void logOut() {}
+    public void logOut(String token) throws InvalidTokenException {
+        Optional<Token> tokenOptional = tokenRepository.findByTokenAndDeleted(token, false);
+
+        if(tokenOptional.isEmpty()){
+            throw new InvalidTokenException("Invalid Token");
+        }
+
+        Token tokenToBeDeleted = tokenOptional.get();
+        tokenToBeDeleted.setDeleted(true);
+        tokenRepository.save(tokenToBeDeleted);
+
+    }
 
     private Token generateToken(User user) {
         LocalDate currentTime = LocalDate.now(); // current time.
