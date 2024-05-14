@@ -1,6 +1,8 @@
 package com.project.userservice.controller;
 
 import com.project.userservice.dtos.*;
+import com.project.userservice.exceptions.InvalidPasswordException;
+import com.project.userservice.model.Token;
 import com.project.userservice.model.User;
 import com.project.userservice.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +30,11 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public LogInResponseDTO logIn(@RequestBody LogInRequestDTO logInRequestDTO){
-        return null;
+    public LogInResponseDTO logIn(@RequestBody LogInRequestDTO logInRequestDTO) throws InvalidPasswordException {
+        Token token =  userService.logIn(logInRequestDTO.getEmail(), logInRequestDTO.getPassword());
+        LogInResponseDTO logInResponseDTO = new LogInResponseDTO();
+        logInResponseDTO.setToken(token.getToken());
+        return logInResponseDTO;
     }
 
     @PostMapping("/logout")
