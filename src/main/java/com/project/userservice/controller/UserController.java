@@ -2,15 +2,13 @@ package com.project.userservice.controller;
 
 import com.project.userservice.dtos.*;
 import com.project.userservice.exceptions.InvalidPasswordException;
+import com.project.userservice.exceptions.InvalidTokenException;
 import com.project.userservice.model.Token;
 import com.project.userservice.model.User;
 import com.project.userservice.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -49,6 +47,12 @@ public class UserController {
             responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return responseEntity;
+    }
+
+    @PostMapping("/validate/{token}")
+    public UserDTO validateToken(@PathVariable String token) throws InvalidTokenException {
+        User user = userService.validateToken(token);
+        return UserDTO.from(user);
     }
 }
 
