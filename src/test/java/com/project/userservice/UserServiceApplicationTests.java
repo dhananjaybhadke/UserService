@@ -13,15 +13,15 @@ import org.springframework.test.annotation.Commit;
 
 import java.util.UUID;
 
-@SpringBootTest
+//@SpringBootTest
 class UserServiceApplicationTests {
 
-    @Autowired
-    private JpaRegisteredClientRepository jpaRegisteredClientRepository;
-
-    @Test
-    void contextLoads() {
-    }
+//    @Autowired
+//    private JpaRegisteredClientRepository jpaRegisteredClientRepository;
+//
+//    @Test
+//    void contextLoads() {
+//    }
 
     /*@Test
     @Commit

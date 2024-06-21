@@ -91,7 +91,7 @@ public class UserService {
         Optional<Token> tokenOptional = tokenRepository.findByTokenAndDeleted(token, false);
 
         if(tokenOptional.isEmpty()){
-            throw new InvalidTokenException("Invalid Token passed");
+            throw new InvalidTokenException("No entry in token table please pass the correct token");
         }
 
         Token tokenToBeValidated = tokenOptional.get();

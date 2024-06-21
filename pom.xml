@@ -75,6 +75,11 @@
             <artifactId>flyway-mysql</artifactId>
             <version>10.11.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>4.1.2</version>
+        </dependency>
     </dependencies>
 
     <build>

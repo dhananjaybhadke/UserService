@@ -54,5 +54,11 @@ public class UserController {
         User user = userService.validateToken(token);
         return UserDTO.from(user);
     }
+
+    @GetMapping("/{id}")
+    public String getUserDetailsById(@PathVariable Long id) {
+        System.out.println("Received request for getUserDetails");
+        return "User Details having id: " + id;
+    }
 }
 
