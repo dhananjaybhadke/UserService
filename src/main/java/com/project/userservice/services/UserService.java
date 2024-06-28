@@ -1,5 +1,8 @@
 package com.project.userservice.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.userservice.config.KafkaProducerClient;
+import com.project.userservice.dtos.SendEmailBodyDTO;
 import com.project.userservice.exceptions.InvalidPasswordException;
 import com.project.userservice.exceptions.InvalidTokenException;
 import com.project.userservice.model.Token;
@@ -22,11 +25,16 @@ public class UserService {
     UserRepository userRepository;
     TokenRepository tokenRepository;
     BCryptPasswordEncoder bCryptPasswordEncoder;
+    KafkaProducerClient kafkaProducerClient;
+    ObjectMapper objectMapper;
 
-    UserService(UserRepository userRepository, TokenRepository tokenRepository,BCryptPasswordEncoder bCryptPasswordEncoder) {
+
+    UserService(UserRepository userRepository, TokenRepository tokenRepository,BCryptPasswordEncoder bCryptPasswordEncoder, KafkaProducerClient kafkaProducerClient, ObjectMapper objectMapper) {
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.kafkaProducerClient = kafkaProducerClient;
+        this.objectMapper = objectMapper;
     }
 
     public User signUp(String email, String password, String name) {
@@ -39,6 +47,18 @@ public class UserService {
         user.setEmail(email);
         user.setName(name);
         user.setHashedPassword(bCryptPasswordEncoder.encode(password));
+
+        SendEmailBodyDTO sendEmailBodyDTO = new SendEmailBodyDTO();
+        sendEmailBodyDTO.setTo(user.getEmail());
+        sendEmailBodyDTO.setFrom("dhananjaybhadke10@gmail.com");
+        sendEmailBodyDTO.setSubject("Welcome to Scaler");
+        sendEmailBodyDTO.setBody("Welcome to Scaler, We are happy to have u in the scaler family");
+
+        try {
+            kafkaProducerClient.sendMessage("sendEmail", objectMapper.writeValueAsString(sendEmailBodyDTO));
+        } catch (Exception e) {
+            System.out.println("Something went wrong while sending a message to Kafka");
+        }
         return userRepository.save(user);
     }
     public Token logIn(String email, String password) throws InvalidPasswordException {
